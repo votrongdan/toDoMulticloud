@@ -1,0 +1,38 @@
+<!-- File: frontend/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Multi-Cloud ToDo</title>
+</head>
+<body>
+  <h1>To-Do List</h1>
+  <form id="taskForm">
+    <input type="text" id="title" placeholder="Task title" required />
+    <input type="file" id="file" />
+    <button type="submit">Add Task</button>
+  </form>
+  <ul id="taskList"></ul>
+
+  <script>
+    const form = document.getElementById('taskForm');
+    const taskList = document.getElementById('taskList');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData();
+      formData.append('title', document.getElementById('title').value);
+      formData.append('file', document.getElementById('file').files[0]);
+
+      const res = await fetch('http://YOUR_GCP_VM_PUBLIC_IP:3000/tasks', {
+        method: 'POST',
+        body: formData
+      });
+
+      const task = await res.json();
+      const li = document.createElement('li');
+      li.textContent = `${task.title} - ${task.fileUrl}`;
+      taskList.appendChild(li);
+    });
+  </script>
+</body>
+</html>
